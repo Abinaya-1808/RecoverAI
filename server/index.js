@@ -39,6 +39,21 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 
+// Root endpoint welcome message
+app.get('/', (req, res) => {
+  res.json({
+    name: 'RecoverAI Backend API Engine',
+    status: 'operational',
+    version: '1.0.0',
+    endpoints: [
+      '/api/health',
+      '/api/predict-recovery',
+      '/api/razorpay/create-order',
+      '/api/razorpay/webhook'
+    ]
+  });
+});
+
 // Helper function to generate natural language explanation via AI or deterministic fallback
 async function generateAIExplanation(data) {
   const { failureReason, amount, ltv, pastSuccessful, prob, action } = data;
