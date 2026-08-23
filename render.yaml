@@ -1,0 +1,34 @@
+services:
+  # 1. Python FastAPI ML Service
+  - type: web
+    name: recoverai-ml-service
+    env: python
+    region: singapore
+    plan: free
+    buildCommand: pip install -r ml_service/requirements.txt && python ml_service/generate_data.py && python ml_service/train_model.py
+    startCommand: python -m uvicorn ml_service.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+
+  # 2. Express Backend API & Webhooks
+  - type: web
+    name: recoverai-backend-api
+    env: node
+    region: singapore
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20.0.0
+      - key: RAZORPAY_KEY_ID
+        value: rzp_test_TT7SfbBTItNND9
+      - key: RAZORPAY_KEY_SECRET
+        value: 4RZ1GbqXrJYFLALn3l94oq55
+      - key: ML_SERVICE_URL
+        fromService:
+          type: web
+          name: recoverai-ml-service
+          property: host
