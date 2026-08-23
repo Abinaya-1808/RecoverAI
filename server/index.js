@@ -43,7 +43,6 @@ const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 async function generateAIExplanation(data) {
   const { failureReason, amount, ltv, pastSuccessful, prob, action } = data;
   
-  // Try Groq / OpenAI if key is present
   if (GROQ_API_KEY) {
     try {
       const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -96,7 +95,6 @@ async function generateAIExplanation(data) {
     }
   }
 
-  // Deterministic Gemini-structured explanation
   return `RecoverAI predicts a high recovery probability (${prob}%) because the customer has a strong payment history (${pastSuccessful} successful payments) and high lifetime value (₹${ltv.toLocaleString('en-IN')}). Since the failure reason is ${failureReason.replace(/_/g, ' ').toLowerCase()}, a ${action.replace(/_/g, ' ').toLowerCase()} is recommended.`;
 }
 
@@ -146,7 +144,6 @@ app.post('/api/predict-recovery', async (req, res) => {
     if (mlResponse.ok) {
       const prediction = await mlResponse.json();
       
-      // Enhance with LLM natural language explanation if keys available
       const customExplanation = await generateAIExplanation({
         failureReason: payload.failureReason || 'EXPIRED_CARD',
         amount: payload.amount || 12500,
@@ -167,7 +164,6 @@ app.post('/api/predict-recovery', async (req, res) => {
   } catch (err) {
     console.warn('ML Service bridge call fallback:', err.message);
     
-    // Fallback scoring logic when FastAPI ML service is unreachable
     const amount = req.body.amount || 12500;
     const prob = req.body.failureReason === 'EXPIRED_CARD' ? 91 : 74;
     const expected = Math.round(amount * (prob / 100));
@@ -200,7 +196,7 @@ app.post('/api/razorpay/create-order', async (req, res) => {
     
     if (isRazorpayConfigured && razorpay) {
       const order = await razorpay.orders.create({
-        amount: Math.round(amount * 100), // amount in paise
+        amount: Math.round(amount * 100),
         currency,
         receipt,
         payment_capture: 1,
@@ -208,7 +204,6 @@ app.post('/api/razorpay/create-order', async (req, res) => {
       return res.json({ success: true, order });
     }
 
-    // Demo Mode fallback order response
     return res.json({
       success: true,
       demo_mode: true,
@@ -254,7 +249,6 @@ app.post('/api/razorpay/webhook', async (req, res) => {
 
       console.log(`Processing Failed Payment: ${txnId} for ${customerEmail} (₹${amount})`);
 
-      // Trigger ML Model Prediction
       try {
         const mlRes = await fetch(`${ML_SERVICE_URL}/predict`, {
           method: 'POST',
@@ -285,6 +279,7 @@ app.post('/api/razorpay/webhook', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`RecoverAI Express Backend running on http://localhost:${PORT}`);
+// Bind explicitly on '0.0.0.0' for Render host binding
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`RecoverAI Express Backend running on http://0.0.0.0:${PORT}`);
 });
