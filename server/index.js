@@ -34,7 +34,7 @@ if (isRazorpayConfigured) {
   console.log('Notice: Razorpay API keys not provided in env. Server running in functional Demo Mode.');
 }
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'https://recoverai-ml-service.onrender.com';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
