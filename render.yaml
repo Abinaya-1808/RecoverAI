@@ -17,9 +17,8 @@ services:
     env: node
     region: singapore
     plan: free
-    rootDir: server
-    buildCommand: npm install
-    startCommand: node index.js
+    buildCommand: npm install && cd server && npm install && cd ..
+    startCommand: node server/index.js
     envVars:
       - key: NODE_VERSION
         value: 20.0.0
