@@ -1,0 +1,35 @@
+# Environment Variables (Secrets)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Python ML Model Artifacts & Datasets
+ml_service/*.joblib
+ml_service/*.csv
+__pycache__/
+*.pyc
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build and Dependencies
+node_modules
+dist
+dist-ssr
+
+# Editor Files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
